@@ -1,134 +1,127 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
-*{
-    margin : 0;
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Poppins:wght@400;700&display=swap');
+
+* {
+    margin: 0;
     padding: 0;
-    font-family: sans-serif;
+    font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
 }
-.container{
+
+.container {
     width: 100%;
-    height: 100%;
-    background:#42455a ;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f6d7e0, #d0f0f6, #f6f6d7);
+    padding: 20px;
 }
-.menu ul{
+
+.menu ul {
     display: inline-flex;
     margin: 50px;
-    font-family :Montserrat;
 }
-.menu ul li{
+
+.menu ul li {
     list-style: none;
     margin: 0 20px;
-    color: #b2b1b1;
+    color: #555;
     cursor: pointer;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);
 }
-.logo img{
+
+.logo img {
     width: 70px;
-    margin-top: -15px ;
+    margin-top: -15px;
     margin-left: 30px;
     margin-right: 1px;
+    border-radius: 50%;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
-.active{
-    color:#19dafa !important;
+
+.active {
+    color: #a3c4f3 !important;
 }
-.signupBtn{
+
+.signupBtn {
     top: 40px;
     right: 80px;
     position: absolute;
     text-decoration: none;
     color: #fff;
-    border:2px solid transparent;
+    border: 2px solid #fff;
     border-radius: 20px;
-    background-image: linear-gradient(#42455a,#42455a),radial-gradient(circle at top left ,#fd00da,#19d7f8);
-    background-origin: border-box;
-    background-clip: content-box,border-box;
-
+    background: #a3c4f3;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
-.signupBtn span{
+
+.signupBtn span {
     display: block;
     padding: 8px 22px;
-
 }
-.banner{
+
+.banner {
     width: 80%;
     height: 70%;
     top: 25%;
-    left:130px;
+    left: 130px;
     position: absolute;
-    color:#fff;
+    color: #555;
+    text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.8);
 }
-.appText{
+
+.appText {
     width: 50%;
     float: left;
 }
-.appText h3{
+
+.appText h3 {
     font-size: 35px;
     width: 640px;
-    position: relative;
-    margin-left: 0px ;
     margin-bottom: 30px;
     margin-top: 100px;
 }
-.para p{
+
+.para p {
     width: 650px;
     font-size: 15px;
-    margin: 30px 20px 30px 20px; 
+    margin: 30px 20px;
     line-height: 25px;
-    color: aqua;
+    color: #666;
 }
-.appPicture{
+
+.appPicture {
     width: 50%;
     float: right;
 }
-.appPicture img{
+
+.appPicture img {
     width: 100%;
     margin-top: 50px;
     padding-left: 100px;
-}
-.btn{
-    height: 50px;
-    width: 50px;
-    border: 2px solid transparent;
-    border-radius: 50%;
-    background-image: linear-gradient(#42455a,#42455a),radial-gradient(circle at top left ,#fd00da,#19d7f8);
-    background-origin: border-box;
-    background-clip: content-box,border-box;
-    text-align: center;
-    size: 50px;
-    margin-top: 50px;
-    color: #fff;
-}
-.btninner{
-    padding:10px 10px 10px 10px;
-    font-size: 20px;
-    cursor: pointer;
-}
-.btn1 {
-    height: 50px;
-    width: 50px;
-    border: 2px solid transparent;
-    border-radius: 50%;
-    background-image: linear-gradient(#42455a, #42455a), radial-gradient(circle at top left, #fd00da, #19d7f8);
-    background-origin: border-box;
-    background-clip: content-box, border-box;
-    text-align: center;
-    size: 50px;
-    margin-top:20px;
-    color: #fff;
+    border-radius: 20px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
-.btn1inner {
-    padding: 10px 10px 10px 10px;
+.btn, .btn1 {
+    height: 50px;
+    width: 50px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: #f7cac9;
+    text-align: center;
+    margin-top: 20px;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.btninner, .btn1inner {
+    padding: 10px;
     font-size: 20px;
     cursor: pointer;
 }
-.txt{
-    margin-top: -30px;
-    margin-right: 50px;
-    margin-left: 60px;
-    margin-bottom: 10px;
+
+.txt, .txt1 {
+    margin: -30px 50px 10px 60px;
+    color: #555;
+    font-weight: 500;
 }
-.txt1 {
-    margin-top: -30px;
-    margin-right: 50px;
-    margin-left: 60px;
-    margin-bottom: 10px;
-}
+
