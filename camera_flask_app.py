@@ -75,9 +75,8 @@ def detect_face(frame):
         pass
     return frame
  
-
-def gen_frames():  # generate frame by frame from camera
-    global out, capture,rec_frame
+def gen_frames():
+    global out, capture, rec_frame
     while True:
         success, frame = camera.read() 
         if success:
@@ -85,14 +84,20 @@ def gen_frames():  # generate frame by frame from camera
                 frame= detect_face(frame)
             if(grey):
                 frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        #    if(open):
-        #     Flip the frame horizontally for natural (selfie-view) visualization.
+            
             frame = cv2.flip(frame, 1)
             frame, landmarks = detectPose(frame, pose_video, display=False) 
             if landmarks:
-            # Perform the Pose Classification.
-                  frame, _ = classifyPose(landmarks, frame, display=False)
-                  frame=cv2.flip(frame,1)   
+                # Perform the Pose Classification and get corrections
+                frame, label, corrections = classifyPose(landmarks, frame, display=False)
+                
+                # Display corrections (up to 3)
+                for i, correction in enumerate(corrections[:3]):
+                    cv2.putText(frame, correction, (10, 70 + i*30),
+                                cv2.FONT_HERSHEY_PLAIN, 1, (0, 255, 255), 2)
+                
+                frame = cv2.flip(frame, 1)
+            
             if(capture):
                 capture=0
                 now = datetime.datetime.now()
@@ -104,18 +109,15 @@ def gen_frames():  # generate frame by frame from camera
                 frame= cv2.putText(cv2.flip(frame,1),"Recording...", (0,25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255),4)
                 frame=cv2.flip(frame,1)
             
-                
             try:
                 ret, buffer = cv2.imencode('.jpg', cv2.flip(frame,1))
                 frame = buffer.tobytes()
                 yield (b'--frame\r\n'
-                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
+                       b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
             except Exception as e:
                 pass
-                
         else:
             pass
-
 
 @app.route('/')
 def index():

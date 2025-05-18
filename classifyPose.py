@@ -34,6 +34,115 @@ def calculateAngle(landmark1, landmark2, landmark3):
     
     # Return the calculated angle.
     return angle
+def getPoseCorrection(landmarks, label):
+    corrections = []
+    
+    # Get required angles
+    left_elbow_angle = calculateAngle(landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value],
+                                    landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value],
+                                    landmarks[mp_pose.PoseLandmark.LEFT_WRIST.value])
+    
+    right_elbow_angle = calculateAngle(landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value],
+                                     landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value],
+                                     landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value])
+    
+    left_shoulder_angle = calculateAngle(landmarks[mp_pose.PoseLandmark.LEFT_ELBOW.value],
+                                       landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value],
+                                       landmarks[mp_pose.PoseLandmark.LEFT_HIP.value])
+    
+    right_shoulder_angle = calculateAngle(landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value],
+                                        landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value],
+                                        landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value])
+    
+    left_knee_angle = calculateAngle(landmarks[mp_pose.PoseLandmark.LEFT_HIP.value],
+                                   landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value],
+                                   landmarks[mp_pose.PoseLandmark.LEFT_ANKLE.value])
+    
+    right_knee_angle = calculateAngle(landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value],
+                                    landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value],
+                                    landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value])
+    
+    left_hip_angle = calculateAngle(landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value],
+                                  landmarks[mp_pose.PoseLandmark.LEFT_HIP.value],
+                                  landmarks[mp_pose.PoseLandmark.LEFT_KNEE.value])
+    
+    right_hip_angle = calculateAngle(landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value],
+                                   landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value],
+                                   landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value])
+
+    # Pose-specific corrections
+    if label == 'Warrior II Pose':
+        if left_knee_angle < 90 or right_knee_angle < 90:
+            corrections.append("Bend your front knee more deeply (should be at 90 degrees)")
+        if left_knee_angle > 120 or right_knee_angle > 120:
+            corrections.append("Straighten your front leg more")
+        if left_shoulder_angle < 80 or right_shoulder_angle < 80:
+            corrections.append("Raise your arms higher")
+        if left_shoulder_angle > 110 or right_shoulder_angle > 110:
+            corrections.append("Lower your arms slightly")
+    
+    elif label == 'Tree Pose':
+        if left_knee_angle < 315 or right_knee_angle > 45:
+            corrections.append("Bring your foot higher on your inner thigh")
+        if left_knee_angle > 335 or right_knee_angle < 25:
+            corrections.append("Lower your foot slightly on your leg")
+        if left_shoulder_angle < 80 or right_shoulder_angle < 80:
+            corrections.append("Bring your hands higher above your head")
+    
+    elif label == 'Bhujangasana':
+        if right_hip_angle < 110 or left_hip_angle < 100:
+            corrections.append("Arch your back more")
+        if right_hip_angle > 140 or left_hip_angle > 140:
+            corrections.append("Reduce the arch in your back slightly")
+        if left_shoulder_angle > 30 or right_shoulder_angle > 30:
+            corrections.append("Relax your shoulders down")
+    
+    elif label == 'T Pose':
+        if left_elbow_angle < 165 or right_elbow_angle < 165:
+            corrections.append("Straighten your arms more")
+        if left_shoulder_angle < 80 or right_shoulder_angle < 80:
+            corrections.append("Raise your arms to shoulder height")
+    
+    elif label == 'Trikonasana':
+        if left_hip_angle < 230 or right_hip_angle < 230:
+            corrections.append("Lean more to the side")
+        if left_hip_angle > 260 or right_hip_angle > 260:
+            corrections.append("Reduce your side bend slightly")
+        if left_elbow_angle < 150 or right_elbow_angle < 150:
+            corrections.append("Straighten your arms more")
+    
+    elif label == 'cat-cow pose':
+        if left_knee_angle < 75 or right_knee_angle < 75:
+            corrections.append("Flatten your back more")
+        if left_knee_angle > 110 or right_knee_angle > 110:
+            corrections.append("Arch your back more")
+    
+    elif label == 'savsana':
+        if left_hip_angle < 165 or right_hip_angle < 165:
+            corrections.append("Relax your legs completely")
+        if left_shoulder_angle > 20 or right_shoulder_angle > 20:
+            corrections.append("Relax your arms more by your sides")
+    
+    elif label == 'Halasana':
+        if right_knee_angle < 70 or left_knee_angle < 70:
+            corrections.append("Straighten your legs more")
+        if right_hip_angle > 55 or left_hip_angle > 55:
+            corrections.append("Lift your hips higher")
+    
+    elif label == 'camel pose':
+        if right_knee_angle < 80 or left_knee_angle < 80:
+            corrections.append("Align your knees directly under your hips")
+        if right_shoulder_angle < 60 or left_shoulder_angle < 60:
+            corrections.append("Reach back more with your hands")
+    
+    elif label == 'peacock pose':
+        if left_elbow_angle < 80 or right_elbow_angle < 80:
+            corrections.append("Keep your elbows closer to your body")
+        if left_hip_angle < 165 or right_hip_angle < 165:
+            corrections.append("Lift your legs higher")
+
+    return corrections if corrections else ["Good form! Keep it up!"]
+
 
 def classifyPose(landmarks, output_image, display=False):
 
@@ -224,26 +333,25 @@ def classifyPose(landmarks, output_image, display=False):
             if left_knee_angle > 165 and left_knee_angle < 210 or right_knee_angle > 165 and right_knee_angle <= 210:
                 label = "peacock pose"
 
-    # Check if the pose is classified successfullyu
+    corrections = getPoseCorrection(landmarks, label) if label != 'Unknown Pose' else []
+    
+    # Check if the pose is classified successfully
     if label != 'Unknown Pose':
-
-        # Update the color (to green) with which the label will be written on the image.
         color = (0, 255, 0)
-
+    
     # Write the label on the output image.
     cv2.putText(output_image, label, (10, 30),
                 cv2.FONT_HERSHEY_PLAIN, 2, color, 2)
-
-    # Check if the resultant image is specified to be displayed.
+    
+    # Add corrections to the image
+    for i, correction in enumerate(corrections[:3]):  # Show up to 3 corrections
+        cv2.putText(output_image, correction, (10, 70 + i*30),
+                    cv2.FONT_HERSHEY_PLAIN, 1, (0, 255, 255), 2)
+    
     if display:
-
-        # Display the resultant image.
         plt.figure(figsize=[10, 10])
         plt.imshow(output_image[:, :, ::-1])
         plt.title("Output Image")
         plt.axis('off')
-
     else:
-
-        # Return the output image and the classified label.
-        return output_image, label
+        return output_image, label, corrections
