@@ -88,15 +88,21 @@ def gen_frames():
             frame = cv2.flip(frame, 1)
             frame, landmarks = detectPose(frame, pose_video, display=False) 
             if landmarks:
-                # Perform the Pose Classification and get corrections
-                frame, label, corrections = classifyPose(landmarks, frame, display=False)
+                # Perform the Pose Classification and get corrections and angles
+                frame, label, corrections, angle_display = classifyPose(landmarks, frame, display=False)
                 
-                # Display corrections (up to 3)
+                # Display angles on the right side
+                for i, angle in enumerate(angle_display[:6]):
+                    cv2.putText(frame, angle, (frame.shape[1] - 200, 30 + i*30),
+                                cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 2)
+                
+                # Display corrections
                 for i, correction in enumerate(corrections[:3]):
                     cv2.putText(frame, correction, (10, 70 + i*30),
                                 cv2.FONT_HERSHEY_PLAIN, 1, (0, 255, 255), 2)
                 
                 frame = cv2.flip(frame, 1)
+
             
             if(capture):
                 capture=0

@@ -36,6 +36,7 @@ def calculateAngle(landmark1, landmark2, landmark3):
     return angle
 def getPoseCorrection(landmarks, label):
     corrections = []
+    angle_display = []
     
     # Get required angles
     left_elbow_angle = calculateAngle(landmarks[mp_pose.PoseLandmark.LEFT_SHOULDER.value],
@@ -69,6 +70,18 @@ def getPoseCorrection(landmarks, label):
     right_hip_angle = calculateAngle(landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value],
                                    landmarks[mp_pose.PoseLandmark.RIGHT_HIP.value],
                                    landmarks[mp_pose.PoseLandmark.RIGHT_KNEE.value])
+    
+    # Store angle information for display
+    angle_display.append(f"L Elbow: {int(left_elbow_angle)}°")
+    angle_display.append(f"R Elbow: {int(right_elbow_angle)}°")
+    angle_display.append(f"L Shoulder: {int(left_shoulder_angle)}°")
+    angle_display.append(f"R Shoulder: {int(right_shoulder_angle)}°")
+    angle_display.append(f"L Knee: {int(left_knee_angle)}°")
+    angle_display.append(f"R Knee: {int(right_knee_angle)}°")
+    angle_display.append(f"L Hip: {int(left_hip_angle)}°")
+    angle_display.append(f"R Hip: {int(right_hip_angle)}°")
+
+
 
     # Pose-specific corrections
     if label == 'Warrior II Pose':
@@ -141,7 +154,7 @@ def getPoseCorrection(landmarks, label):
         if left_hip_angle < 165 or right_hip_angle < 165:
             corrections.append("Lift your legs higher")
 
-    return corrections if corrections else ["Good form! Keep it up!"]
+    return corrections if corrections else ["Good form! Keep it up!"],angle_display
 
 
 def classifyPose(landmarks, output_image, display=False):
@@ -333,15 +346,21 @@ def classifyPose(landmarks, output_image, display=False):
             if left_knee_angle > 165 and left_knee_angle < 210 or right_knee_angle > 165 and right_knee_angle <= 210:
                 label = "peacock pose"
 
-    corrections = getPoseCorrection(landmarks, label) if label != 'Unknown Pose' else []
+    # Get corrections and angles for the pose
+    corrections, angle_display = getPoseCorrection(landmarks, label) if label != 'Unknown Pose' else ([], [])
     
     # Check if the pose is classified successfully
     if label != 'Unknown Pose':
         color = (0, 255, 0)
     
-    # Write the label on the output image.
+    # Write the label on the output image
     cv2.putText(output_image, label, (10, 30),
                 cv2.FONT_HERSHEY_PLAIN, 2, color, 2)
+    
+    # Display angles on the right side of the image
+    for i, angle in enumerate(angle_display[:6]):  # Show up to 6 angles
+        cv2.putText(output_image, angle, (output_image.shape[1] - 200, 30 + i*30),
+                    cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 2)
     
     # Add corrections to the image
     for i, correction in enumerate(corrections[:3]):  # Show up to 3 corrections
@@ -354,4 +373,4 @@ def classifyPose(landmarks, output_image, display=False):
         plt.title("Output Image")
         plt.axis('off')
     else:
-        return output_image, label, corrections
+        return output_image, label, corrections, angle_display
